@@ -1,15 +1,29 @@
 <template>
   <div>
+    <button @click="resetProfile">Reset Profile</button>
     <NuxtLink to="/"> Home </NuxtLink>
     <NuxtLink to="/pricing"> Pricing </NuxtLink>
     <NuxtPage />
-    <pre>{{ ninetailed }}</pre>
-    <!-- <NuxtWelcome /> -->
+    <ClientOnly>
+      <pre>{{ profileState }}</pre>
+    </ClientOnly>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NinetailedKey } from "./vuePlugins/ninetailed/symbols";
+import { NinetailedKey, ProfileStateKey } from "./vuePlugins/ninetailed";
+import type { Ninetailed, ProfileState } from "@ninetailed/experience.js";
+import type { Ref } from "vue";
 
-const ninetailed = inject(NinetailedKey);
+let ninetailed: Ninetailed | undefined;
+let profileState: Ref<ProfileState> | undefined;
+
+function resetProfile() {
+  ninetailed?.reset();
+}
+
+if (process.client) {
+  ninetailed = inject(NinetailedKey);
+  profileState = inject(ProfileStateKey);
+}
 </script>
