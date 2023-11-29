@@ -11,8 +11,14 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/lodash": "^4.14.202",
     "nuxt": "^3.8.2",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@ninetailed/experience.js": "^7.4.2",
+    "@ninetailed/experience.js-shared": "^7.4.2",
+    "lodash": "^4.17.21"
   }
 }
