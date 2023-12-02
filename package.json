@@ -19,6 +19,8 @@
   "dependencies": {
     "@ninetailed/experience.js": "^7.4.2",
     "@ninetailed/experience.js-shared": "^7.4.2",
+    "@ninetailed/experience.js-utils-contentful": "^7.4.3",
+    "contentful": "^10.6.12",
     "lodash": "^4.17.21"
   }
 }

@@ -2,13 +2,17 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   routeRules: {
-    // Homepage pre-rendered at build time
-    "/": { prerender: true },
+    // Demo purposes only!
+    "/**": { isr: 5 },
   },
   runtimeConfig: {
     public: {
       ninetailedClientId: "",
       ninetailedEnvironment: "",
+      contentfulSpaceId: "",
+      contentfulEnvironment: "",
+      contentfulDeliveryToken: "",
     },
+    contentfulPreviewToken: "",
   },
 });
