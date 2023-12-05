@@ -61,13 +61,13 @@ export const VueNinetailed = {
       }
     );
 
-    const profile = shallowRef(ninetailed.profileState);
+    const profileState = shallowRef(ninetailed.profileState);
 
-    ninetailed.onProfileChange((profileState) => {
-      profile.value = profileState;
+    ninetailed.onProfileChange((newProfileState) => {
+      profileState.value = newProfileState;
     });
 
     app.provide(NinetailedKey, ninetailed);
-    app.provide(ProfileStateKey, profile);
+    app.provide(ProfileStateKey, profileState);
   },
 };

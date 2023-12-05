@@ -10,7 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { parseExperiences } from "~/lib/experiences";
+import type { SingularBlock } from "~/lib/experiences";
+import {
+  mapBaselineContentfulEntry,
+  parseExperiences,
+} from "~/lib/experiences";
 
 // TODO: Make pure SSG via server only fetched data
 const { data } = await useAsyncData("page", async () => {
@@ -24,8 +28,12 @@ const { data } = await useAsyncData("page", async () => {
 });
 
 const page = data.value.items[0];
-const baselineHero = page.fields.sections.find(
-  (section) => section.sys.contentType.sys.id === "hero"
+
+const baselineHero = mapBaselineContentfulEntry(
+  page.fields.sections.find(
+    (section: SingularBlock) => section.sys.contentType?.sys.id === "hero"
+  )
 );
+
 const mappedExperiences = parseExperiences(baselineHero);
 </script>

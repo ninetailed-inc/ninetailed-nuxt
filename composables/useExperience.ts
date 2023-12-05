@@ -12,7 +12,6 @@ import type {
   VariantRef,
 } from "@ninetailed/experience.js";
 
-import { useExperienceSelectionMiddleware } from "./useExperienceSelectionMiddleware";
 import { ProfileStateKey } from "~/vuePlugins/ninetailed";
 
 type Load<Variant extends Reference> = {
@@ -67,19 +66,15 @@ type UseExperienceResponse<Variant extends Reference> =
   | Success<Variant | VariantRef>
   | Fail<Variant | VariantRef>;
 
-// TODO: Re-implement override for middleware application
 // TODO: Figure out return typing
 export const useExperience = <Variant extends Reference>({
   baseline,
   experiences,
-}: UseExperienceArgs<Variant>): UseExperienceResponse<Variant> => {
+}: UseExperienceArgs<Variant>): ComputedRef<UseExperienceResponse<Variant>> => {
   const profileState = inject(ProfileStateKey);
   const hasVariants = experiences
     .map((experience) => selectHasExperienceVariants(experience, baseline))
     .reduce((acc, curr) => acc || curr, false);
-
-  // Middleware
-  // Override result
 
   const baseReturn = {
     ...profileState?.value,
@@ -112,13 +107,10 @@ export const useExperience = <Variant extends Reference>({
     });
 
     if (!experience) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return { ...emptyReturn, profile: profileState.value.profile };
     }
 
-    // The correct experience is identified...
-    // FIXME: Something wrong here, I keep getting the baseline returned.
     const { variant, index } = selectExperienceVariant({
       baseline,
       experience,
@@ -139,36 +131,6 @@ export const useExperience = <Variant extends Reference>({
     };
   });
 
+  // @ts-ignore
   return experienceState;
-
-  const experienceSelectionMiddleware = useExperienceSelectionMiddleware({
-    experiences,
-    baseline,
-    profile: profileState?.value.profile,
-  });
-
-  const overrideResult = ({
-    experience: originalExperience,
-    variant: originalVariant,
-    variantIndex: originalVariantIndex,
-    ...other
-  }: UseExperienceResponse<Variant>): UseExperienceResponse<Variant> => {
-    const { experience, variant, variantIndex } = experienceSelectionMiddleware(
-      {
-        experience: originalExperience,
-        variant: originalVariant,
-        variantIndex: originalVariantIndex,
-      }
-    );
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return {
-      ...other,
-      audience: experience?.audience ? experience.audience : null,
-      experience,
-      variant,
-      variantIndex,
-    };
-  };
 };
