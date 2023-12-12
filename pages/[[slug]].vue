@@ -1,12 +1,12 @@
 <template>
   <pre>You've visited the {{ formattedSlug }} page!</pre>
   <pre>
- There are {{ page.fields.sections.length }} sections on this entry, {{
+There are {{ data.fields.sections.length }} sections on this entry, {{
       numberOfHeroSections
     }} of which are Hero sections.</pre
   >
   <ClientOnly>
-    <PageSections />
+    <PageSections :data="data" />
   </ClientOnly>
 </template>
 
@@ -23,27 +23,28 @@ const formattedSlug = ref(route.params.slug || "/");
 
 // TODO: Make pure SSG via server only fetched data
 const { data } = await useAsyncData(
-  `page: ${formattedSlug}`,
+  "pageData",
   async () => {
     const { $contentfulClient } = useNuxtApp();
-    return await $contentfulClient.getEntries({
+    console.log(`Fetching ${formattedSlug.value} data`);
+    const pages = await $contentfulClient.getEntries({
       content_type: "page",
       "fields.slug": formattedSlug.value,
       limit: 1,
       include: 10,
     });
+    return pages.items[0];
   },
   { watch: [() => route.params.slug] }
 );
 
-const page = data.value.items[0];
-
-const numberOfHeroSections = page.fields.sections.filter(
+const numberOfHeroSections = data.value.fields.sections.filter(
   (section: any) => section.sys?.contentType.sys.id === "hero"
 ).length;
 
-const PageSections = () => {
-  return page.fields.sections.map((section: SingularBlock) => {
+// TODO: Prop typing
+const PageSections = (props: { data: any }) => {
+  return props.data.fields.sections.map((section: SingularBlock) => {
     if (section.sys.contentType?.sys.id === "hero") {
       const baselineHeroEntry = mapBaselineContentfulEntry(section);
       const mappedExperiences = parseExperiences(section);
